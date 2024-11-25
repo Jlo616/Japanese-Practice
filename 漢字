@@ -1,0 +1,234 @@
+<!doctype html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文漢字練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .kanji-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .kanji-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .kanji {
+            font-size: 32px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .romaji-input {
+            padding: 8px;
+            width: 120px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        .correct {
+            background-color: #90EE90;
+        }
+        .incorrect {
+            background-color: #FFB6C1;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>日文漢字練習</h1>
+    <div class="kanji-container" id="kanjiContainer"></div>
+    <button onclick="resetGame()">再來一次</button>
+
+    <script>
+        const kanjiList = [
+            // 單字漢字
+            {kanji: "山", romaji: "yama"},
+            {kanji: "川", romaji: "kawa"},
+            {kanji: "田", romaji: "ta"},
+            {kanji: "月", romaji: "tsuki"},
+            {kanji: "火", romaji: "hi"},
+            {kanji: "水", romaji: "mizu"},
+            {kanji: "木", romaji: "ki"},
+            {kanji: "金", romaji: "kin"},
+            {kanji: "雨", romaji: "ame"},
+            {kanji: "日", romaji: "hi"},
+            {kanji: "人", romaji: "hito"},
+            {kanji: "手", romaji: "te"},
+            {kanji: "目", romaji: "me"},
+            {kanji: "口", romaji: "kuchi"},
+            {kanji: "風", romaji: "kaze"},
+            {kanji: "空", romaji: "sora"},
+            {kanji: "雲", romaji: "kumo"},
+            {kanji: "星", romaji: "hoshi"},
+            {kanji: "花", romaji: "hana"},
+            {kanji: "草", romaji: "kusa"},
+            {kanji: "魚", romaji: "sakana"},
+            {kanji: "鳥", romaji: "tori"},
+            {kanji: "犬", romaji: "inu"},
+            {kanji: "猫", romaji: "neko"},
+            {kanji: "馬", romaji: "uma"},
+            {kanji: "竹", romaji: "take"},
+            {kanji: "石", romaji: "ishi"},
+            {kanji: "海", romaji: "umi"},
+            {kanji: "冬", romaji: "fuyu"},
+            {kanji: "夏", romaji: "natsu"},
+            {kanji: "春", romaji: "haru"},
+            {kanji: "秋", romaji: "aki"},
+            {kanji: "夜", romaji: "yoru"},
+            {kanji: "朝", romaji: "asa"},
+            {kanji: "空", romaji: "sora"},
+            
+            // 雙字漢字
+            {kanji: "時間", romaji: "jikan"},
+            {kanji: "食事", romaji: "shokuji"},
+            {kanji: "電車", romaji: "densha"},
+            {kanji: "学校", romaji: "gakkou"},
+            {kanji: "映画", romaji: "eiga"},
+            {kanji: "新聞", romaji: "shinbun"},
+            {kanji: "天気", romaji: "tenki"},
+            {kanji: "電話", romaji: "denwa"},
+            {kanji: "図書", romaji: "tosho"},
+            {kanji: "週末", romaji: "shuumatsu"},
+            {kanji: "出口", romaji: "deguchi"},
+            {kanji: "入口", romaji: "iriguchi"},
+            {kanji: "火山", romaji: "kazan"},
+            {kanji: "海岸", romaji: "kaigan"},
+            {kanji: "空港", romaji: "kuukou"},
+            {kanji: "病院", romaji: "byouin"},
+            {kanji: "銀行", romaji: "ginkou"},
+            {kanji: "日本", romaji: "nihon"},
+            {kanji: "中国", romaji: "chuugoku"},
+            {kanji: "米国", romaji: "beikoku"},
+            {kanji: "東京", romaji: "toukyou"},
+            {kanji: "大阪", romaji: "oosaka"},
+            {kanji: "京都", romaji: "kyouto"},
+            {kanji: "北海", romaji: "hokkai"},
+            {kanji: "南極", romaji: "nankyoku"},
+            
+            // 更多單字漢字
+            {kanji: "年", romaji: "toshi"},
+            {kanji: "円", romaji: "en"},
+            {kanji: "分", romaji: "fun"},
+            {kanji: "本", romaji: "hon"},
+            {kanji: "名", romaji: "na"},
+            {kanji: "白", romaji: "shiro"},
+            {kanji: "黒", romaji: "kuro"},
+            {kanji: "赤", romaji: "aka"},
+            {kanji: "青", romaji: "ao"},
+            {kanji: "店", romaji: "mise"},
+            {kanji: "道", romaji: "michi"},
+            {kanji: "車", romaji: "kuruma"},
+            {kanji: "駅", romaji: "eki"},
+            {kanji: "国", romaji: "kuni"},
+            {kanji: "門", romaji: "mon"},
+            {kanji: "音", romaji: "oto"},
+            {kanji: "力", romaji: "chikara"},
+            {kanji: "文", romaji: "bun"},
+            {kanji: "字", romaji: "ji"},
+            {kanji: "休", romaji: "yasu"},
+            {kanji: "立", romaji: "tatsu"},
+            {kanji: "見", romaji: "miru"},
+            {kanji: "聞", romaji: "kiku"},
+            {kanji: "読", romaji: "yomu"},
+            {kanji: "書", romaji: "kaku"},
+            
+            // 更多雙字漢字
+            {kanji: "午後", romaji: "gogo"},
+            {kanji: "午前", romaji: "gozen"},
+            {kanji: "今日", romaji: "kyou"},
+            {kanji: "明日", romaji: "ashita"},
+            {kanji: "昨日", romaji: "kinou"},
+            {kanji: "今年", romaji: "kotoshi"},
+            {kanji: "来年", romaji: "rainen"},
+            {kanji: "去年", romaji: "kyonen"},
+            {kanji: "電気", romaji: "denki"},
+            {kanji: "切手", romaji: "kitte"},
+            {kanji: "食堂", romaji: "shokudou"},
+            {kanji: "勉強", romaji: "benkyou"},
+            {kanji: "運動", romaji: "undou"},
+            {kanji: "散歩", romaji: "sanpo"},
+            {kanji: "旅行", romaji: "ryokou"}
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createKanjiGame() {
+            const container = document.getElementById('kanjiContainer');
+            container.innerHTML = '';
+            
+            const selectedKanji = shuffleArray([...kanjiList]).slice(0, 10);
+            
+            selectedKanji.forEach((item, index) => {
+                const kanjiItem = document.createElement('div');
+                kanjiItem.className = 'kanji-item';
+                
+                const kanjiSpan = document.createElement('span');
+                kanjiSpan.className = 'kanji';
+                kanjiSpan.textContent = item.kanji;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'romaji-input';
+                input.placeholder = 'ローマ字';
+                
+                kanjiSpan.addEventListener('click', () => {
+                    if (input.value !== item.romaji) {
+                        input.value = item.romaji;
+                    } else {
+                        input.value = '';
+                    }
+                });
+                
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.toLowerCase() === item.romaji) {
+                        e.target.classList.add('correct');
+                        e.target.classList.remove('incorrect');
+                    } else {
+                        e.target.classList.add('incorrect');
+                        e.target.classList.remove('correct');
+                    }
+                });
+                
+                kanjiItem.appendChild(kanjiSpan);
+                kanjiItem.appendChild(input);
+                container.appendChild(kanjiItem);
+            });
+        }
+
+        function resetGame() {
+            createKanjiGame();
+        }
+
+        // Initial game creation
+        createKanjiGame();
+    </script>
+</body>
+</html>
